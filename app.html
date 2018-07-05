@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+    #principal{
+      text-align: center;
+    }
+    </style>
+  </head>
+  <body>
+    <div id="principal">
+    <h1>Elige día</h1>
+
+    <input id="fecha" type="date" name="fecha">
+    <br>
+    <br>
+
+    <input  id="lugar" type="text" name="lugar">
+    <br>
+
+    <button id="crear">Crear</button>
+    </div>
+
+    <div id="opciones">
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script>
+
+
+
+    $("#crear").click(function(){
+
+      console.log(lugar);
+      $("#opciones").append("<h1>"+ $("#fecha").val() + "</h1><br><h1>"+$("#lugar").val().trim()+"</h1>");
+      $("#opciones").append("<button>"+"+1"+"</button>");
+    })
+
+    </script>
+  </body>
+</html>
