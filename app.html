@@ -29,15 +29,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
     <script>
 
-
+    var contador=0;
 
     $("#crear").click(function(){
 
-      console.log(lugar);
       $("#opciones").append("<h1>"+ $("#fecha").val() + "</h1><br><h1>"+$("#lugar").val().trim()+"</h1>");
-      $("#opciones").append("<button>"+"+1"+"</button>");
+      $("#opciones").append("<button class=sumar>"+"+1"+"</button>");
+      
     })
 
+     $(document).on("click", ".sumar",  function(event){
+
+       contador++
+       console.log(contador)
+
+       $(event.currentTarget).click(function(){
+
+         $(".sumar").text(contador);
+       })
+
+
+
+     })
     </script>
   </body>
 </html>
