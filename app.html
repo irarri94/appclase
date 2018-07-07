@@ -4,9 +4,19 @@
     <meta charset="utf-8">
     <title></title>
     <style>
+<<<<<<< HEAD
     #principal{
       text-align: center;
     }
+=======
+    #opciones, #principal{
+      text-align: center;
+    }
+    .cont{
+      display: inline-block;
+      margin:30px;
+    }
+>>>>>>> nuevas funcionalidades
     </style>
   </head>
   <body>
@@ -29,6 +39,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
     <script>
 
+<<<<<<< HEAD
     var contador=0;
 
     $("#crear").click(function(){
@@ -51,6 +62,48 @@
 
 
      })
+=======
+
+
+    $("#crear").click(function(){
+      var fecha=$("#fecha").val()
+      var lugar=$("#lugar").val().trim()
+      if(fecha||lugar){
+        $("#opciones").append("<div class=cont> <h1>"+ fecha + "</h1><br><h1>"+lugar+"</h1> <button class=sumar>0</button> <button class=restar>-</button></div>");
+      }else{
+        alert("Es necesario rellenar fecha y hora");
+      };
+
+
+    });
+     $(document).on("click", ".sumar",  function(event){
+
+        if(!$("button.sumar").hasClass("clickado")){
+          var sumar=parseInt($(event.currentTarget).text())+1;
+          console.log(sumar);
+          $(event.currentTarget).text(sumar);
+           $("button.sumar").addClass("clickado");
+           $("button.restar").removeClass("clickado2");
+        };
+
+     });
+
+     $(document).on("click", ".restar",  function(event){
+       if(!$("button.restar").hasClass("clickado2")){
+         var restar=parseInt($(event.currentTarget).prev().text());
+         if(restar>=1){
+           restar--
+         }else{
+           restar=0;
+         };
+         console.log(restar);
+         $(event.currentTarget).prev().text(restar);
+         $("button.restar").addClass("clickado2");
+         $("button.sumar").removeClass("clickado");
+        }
+     });
+
+>>>>>>> nuevas funcionalidades
     </script>
   </body>
 </html>
