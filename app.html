@@ -33,7 +33,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
     <script>
 
-    function fecha(){
+
       $.get("http://192.168.100.11:1337/fechas", function(resp){
         console.log(resp);
         resp.forEach(function(fechas){
@@ -41,8 +41,7 @@
           $("#opciones").append("<div class=cont> <h1>"+ fechas.fecha + "</h1><br><h1>"+fechas.lugar+"</h1><h1 class=votos>"+fechas.votos+"</h1><button class=sumar>+</button> <button class=restar>-</button></div>");
         })
       });
-    };
-    fecha();
+  
 
     $("#crear").click(function(){
       var fecha=$("#fecha").val()
