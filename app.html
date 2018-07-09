@@ -4,8 +4,12 @@
     <meta charset="utf-8">
     <title></title>
     <style>
-    #principal{
+    #opciones, #principal{
       text-align: center;
+    }
+    .cont{
+      display: inline-block;
+      margin:30px;
     }
     </style>
   </head>
@@ -29,28 +33,55 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
     <script>
 
-    var contador=0;
+    function fecha(){
+      $.get("http://192.168.100.11:1337/fechas", function(resp){
+        console.log(resp);
+        resp.forEach(function(fechas){
+          console.log(fechas);
+          $("#opciones").append("<div class=cont> <h1>"+ fechas.fecha + "</h1><br><h1>"+fechas.lugar+"</h1><h1 class=votos>"+fechas.votos+"</h1><button class=sumar>+</button> <button class=restar>-</button></div>");
+        })
+      });
+    };
+    fecha();
 
     $("#crear").click(function(){
+      var fecha=$("#fecha").val()
+      var lugar=$("#lugar").val().trim()
+      if(fecha||lugar){
+        $("#opciones").append("<div class=cont> <h1>"+ fecha + "</h1><br><h1>"+lugar+"</h1> <h1 class=votos>0</h1><button class=sumar>+</button> <button class=restar>-</button></div>");
+      }else{
+        alert("Es necesario rellenar fecha y hora");
+      };
 
-      $("#opciones").append("<h1>"+ $("#fecha").val() + "</h1><br><h1>"+$("#lugar").val().trim()+"</h1>");
-      $("#opciones").append("<button class=sumar>"+"+1"+"</button>");
-      
-    })
 
+    });
      $(document).on("click", ".sumar",  function(event){
 
-       contador++
-       console.log(contador)
+        if(!$("button.sumar").hasClass("clickado")){
+          var sumar=parseInt($(event.currentTarget).prev().text())+1;
+          console.log(sumar);
+          $(event.currentTarget).prev().text(sumar);
+           $("button.sumar").addClass("clickado");
+           $("button.restar").removeClass("clickado2");
+        };
 
-       $(event.currentTarget).click(function(){
+     });
 
-         $(".sumar").text(contador);
-       })
+     $(document).on("click", ".restar",  function(event){
+       if(!$("button.restar").hasClass("clickado2")){
+         var restar=parseInt($(event.currentTarget).prev().prev().text());
+         if(restar>=1){
+           restar--
+         }else{
+           restar=0;
+         };
+         console.log(restar);
+         $(event.currentTarget).prev().prev().text(restar);
+         $("button.restar").addClass("clickado2");
+         $("button.sumar").removeClass("clickado");
+        }
+     });
 
-
-
-     })
     </script>
   </body>
 </html>
