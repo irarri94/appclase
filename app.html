@@ -38,7 +38,7 @@
         console.log(resp);
         resp.forEach(function(fechas){
           console.log(fechas);
-          $("#opciones").append("<div class=cont> <h1>"+ fechas.fecha + "</h1><br><h1>"+fechas.lugar+"</h1><h1 class=votos>"+fechas.votos+"</h1><button data-id="+fechas.id+" class=sumar>+</button> <button class=restar data-id="+fechas.id+">-</button></div>");
+          $("#opciones").append("<div class=cont data-id="+fechas.id+"> <h1>"+ fechas.fecha + "</h1><br><h1>"+fechas.lugar+"</h1><h1 class=votos>"+fechas.votos+"</h1><button class=sumar>+</button> <button class=restar>-</button><br><br><button class=eliminar>Eliminar</button></div>");
         })
       });
 
@@ -49,8 +49,9 @@
       if(!fecha||!lugar){
         alert("Es necesario rellenar fecha y hora");
       }else{
-        $.post("http://192.168.100.63:1337/fecha",{fecha:fecha, lugar:lugar},function(){
-          $("#opciones").append("<div class=cont> <h1>"+ fecha + "</h1><br><h1>"+lugar+"</h1> <h1 class=votos>0</h1><button class=sumar>+</button> <button class=restar>-</button></div>");
+        $.post("http://192.168.100.63:1337/fecha",{fecha:fecha, lugar:lugar},function(resp){
+          console.log(resp);
+          $("#opciones").append("<div class=cont data-id="+resp.id+"> <h1>"+ resp.fecha + "</h1><br><h1>"+resp.lugar+"</h1> <h1 class=votos>0</h1><button class=sumar>+</button> <button class=restar>-</button><br><br><button class=eliminar>Eliminar</button></div>");
         });
       }
 
@@ -58,39 +59,56 @@
 
      $(document).on("click", ".sumar",  function(event){
        var boton=$(event.currentTarget);
-       var id=boton.data("id");
+       var id=boton.parent().data("id");
         if(!boton.hasClass("clickado")){
-          $.post("http://192.168.100.63:1337/fecha/sumar/"+ id, {}, function(votos){
-            var sumar=parseInt(boton.prev().text())+1;
-            console.log(sumar);
-            boton.prev().text(sumar);
-            boton.addClass("clickado");
-          });
+          $.ajax({
+          url:"http://192.168.100.63:1337/fecha/sumar/"+ id,
+          type:"PUT",
+          data:{}
+        }).done(function(votos){
+          var sumar=parseInt(boton.prev().text())+1;
+          console.log(sumar);
+          boton.prev().text(sumar);
+          boton.addClass("clickado");
+        });
         };
-
      });
 
      $(document).on("click", ".restar",  function(event){
        var boton=$(event.currentTarget);
-       var id=boton.data("id");
+       var id=boton.parent().data("id");
        if(boton.prev().hasClass("clickado")){
-         $.post("http://192.168.100.63:1337/fecha/restar/"+ id, {}, function(votos){
-           boton.prev().removeClass("clickado");
-           // boton.removeClass("clickado2");
-           var restar=parseInt(boton.prev().prev().text());
-           if(restar>=1){
-             restar--
-           }else{
-             restar=0;
-           };
-           console.log(restar);
-           boton.prev().prev().text(restar);
-           // $("button.restar").addClass("clickado2");
-           // $("button.sumar").removeClass("clickado");
-         });
+         $.ajax({
+         url:"http://192.168.100.63:1337/fecha/restar/"+ id,
+         type:"PUT",
+         data:{}
+       }).done(function(votos){
+         boton.prev().removeClass("clickado");
+         var restar=parseInt(boton.prev().prev().text());
+         if(restar>=1){
+           restar--
+         }else{
+           restar=0;
+         };
+         console.log(restar);
+         boton.prev().prev().text(restar);
+       });
        };
      });
 
+
+     $(document).on("click", ".eliminar",  function(event){
+       var boton=$(event.currentTarget);
+       var id=boton.parent().data("id");
+     $.ajax({
+     url:"http://192.168.100.63:1337/fecha/"+ id,
+     type:"DELETE",
+     data:{}
+      }).done(function(votos){
+        boton.parent().remove();
+        console.log(votos)
+      });
+      });
     </script>
   </body>
 </html>
