@@ -34,51 +34,61 @@
     <script>
 
 
-      $.get("http://192.168.100.11:1337/fechas", function(resp){
+      $.get("http://192.168.100.63:1337/fechas", function(resp){
         console.log(resp);
         resp.forEach(function(fechas){
           console.log(fechas);
-          $("#opciones").append("<div class=cont> <h1>"+ fechas.fecha + "</h1><br><h1>"+fechas.lugar+"</h1><h1 class=votos>"+fechas.votos+"</h1><button class=sumar>+</button> <button class=restar>-</button></div>");
+          $("#opciones").append("<div class=cont> <h1>"+ fechas.fecha + "</h1><br><h1>"+fechas.lugar+"</h1><h1 class=votos>"+fechas.votos+"</h1><button data-id="+fechas.id+" class=sumar>+</button> <button class=restar data-id="+fechas.id+">-</button></div>");
         })
       });
-  
+
 
     $("#crear").click(function(){
       var fecha=$("#fecha").val()
       var lugar=$("#lugar").val().trim()
-      if(fecha||lugar){
-        $("#opciones").append("<div class=cont> <h1>"+ fecha + "</h1><br><h1>"+lugar+"</h1> <h1 class=votos>0</h1><button class=sumar>+</button> <button class=restar>-</button></div>");
-      }else{
+      if(!fecha||!lugar){
         alert("Es necesario rellenar fecha y hora");
-      };
-
+      }else{
+        $.post("http://192.168.100.63:1337/fecha",{fecha:fecha, lugar:lugar},function(){
+          $("#opciones").append("<div class=cont> <h1>"+ fecha + "</h1><br><h1>"+lugar+"</h1> <h1 class=votos>0</h1><button class=sumar>+</button> <button class=restar>-</button></div>");
+        });
+      }
 
     });
-     $(document).on("click", ".sumar",  function(event){
 
-        if(!$("button.sumar").hasClass("clickado")){
-          var sumar=parseInt($(event.currentTarget).prev().text())+1;
-          console.log(sumar);
-          $(event.currentTarget).prev().text(sumar);
-           $("button.sumar").addClass("clickado");
-           $("button.restar").removeClass("clickado2");
+     $(document).on("click", ".sumar",  function(event){
+       var boton=$(event.currentTarget);
+       var id=boton.data("id");
+        if(!boton.hasClass("clickado")){
+          $.post("http://192.168.100.63:1337/fecha/sumar/"+ id, {}, function(votos){
+            var sumar=parseInt(boton.prev().text())+1;
+            console.log(sumar);
+            boton.prev().text(sumar);
+            boton.addClass("clickado");
+          });
         };
 
      });
 
      $(document).on("click", ".restar",  function(event){
-       if(!$("button.restar").hasClass("clickado2")){
-         var restar=parseInt($(event.currentTarget).prev().prev().text());
-         if(restar>=1){
-           restar--
-         }else{
-           restar=0;
-         };
-         console.log(restar);
-         $(event.currentTarget).prev().prev().text(restar);
-         $("button.restar").addClass("clickado2");
-         $("button.sumar").removeClass("clickado");
-        }
+       var boton=$(event.currentTarget);
+       var id=boton.data("id");
+       if(boton.prev().hasClass("clickado")){
+         $.post("http://192.168.100.63:1337/fecha/restar/"+ id, {}, function(votos){
+           boton.prev().removeClass("clickado");
+           // boton.removeClass("clickado2");
+           var restar=parseInt(boton.prev().prev().text());
+           if(restar>=1){
+             restar--
+           }else{
+             restar=0;
+           };
+           console.log(restar);
+           boton.prev().prev().text(restar);
+           // $("button.restar").addClass("clickado2");
+           // $("button.sumar").removeClass("clickado");
+         });
+       };
      });
 
     </script>
