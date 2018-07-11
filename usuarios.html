@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+    div{
+      text-align: center;
+    }
+
+    </style>
+  </head>
+  <body>
+    <div>
+    <h1>Crea tu usuario</h1>
+    <input id="usuario" type="text" name="username" placeholder="usuario">
+    <input id="contraseña" type="password" name="password" placeholder="contraseña">
+    <button id="crear">Crear</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script>
+    function crearUsuario(){
+      var usuario=$("#usuario").val().trim();
+      var contraseña=$("#contraseña").val().trim();
+      $.ajax({
+        url:"http://192.168.100.50:1337/usuario",
+        type:"POST",
+        data:{
+          username:usuario,
+          password:contraseña
+        }
+      }).done(function(){
+        alert("Usuario creado");
+        window.location ="C:/Users/Admin/Desktop/Iraide/appclase/app.html";
+
+      })
+      .fail(function(error){
+        if(!usuario){
+          alert("Es necesario introducir el nombre de usuario");
+        }
+        if(!contraseña){
+          alert("Es necesario introducir la contraseña");
+        }
+      })
+    }
+    $("#crear").click(crearUsuario);
+    </script>
+  </body>
+</html>
