@@ -10,6 +10,8 @@
     .cont{
       display: inline-block;
       margin:30px;
+      border: 2px solid;
+      padding: 40px;
     }
     </style>
   </head>
@@ -32,9 +34,9 @@
     <br>
     <br>
 
-    <input  id="lugar" type="text" name="lugar">
+    <input  placeholder="Lugar" id="lugar" type="text" name="lugar">
     <br>
-
+    <br>
     <button id="crear">Crear</button>
     </div>
 
@@ -51,7 +53,7 @@
         var username=$("#usuario").val();
         var password=$("#contraseña").val();
         $.ajax({
-          url:"http://192.168.100.50:1337/login",
+          url:"http://192.168.100.62:1337/login",
           type:"POST",
           data:{
             username:username,
@@ -70,14 +72,14 @@
       var USUARIO_ID = usuario.id;
       $("div#login").hide();
       $("div#app").show();
-      $.get("http://192.168.100.50:1337/fechas", function(resp){
+      $.get("http://192.168.100.62:1337/fechas", function(resp){
         console.log(resp);
         resp.forEach(function(fechas){
-          if(fechas.creador===USUARIO_ID){
+          if(fechas.creador.id===USUARIO_ID){
             console.log(fechas);
-            $("#opciones").append("<div class=cont data-id="+fechas.id+"> <h1>"+ fechas.fecha + "</h1><br><h1>"+fechas.lugar+"</h1><h1 class=votos>"+fechas.votos+"</h1><button class=sumar>+</button> <button class=restar>-</button><br><br><button class=eliminar>Eliminar</button></div>");
+            $("#opciones").append("<div class=cont data-id="+fechas.id+"> <h3>"+fechas.creador.username+"</h3><h1>"+ fechas.fecha + "</h1><br><h1>"+fechas.lugar+"</h1><h1 class=votos>"+fechas.votos+"</h1><button class=sumar>+</button> <button class=restar>-</button><br><br><button class=eliminar>Eliminar</button></div>");
           }else{
-            $("#opciones").append("<div class=cont data-id="+fechas.id+"> <h1>"+ fechas.fecha + "</h1><br><h1>"+fechas.lugar+"</h1><h1 class=votos>"+fechas.votos+"</h1><button class=sumar>+</button> <button class=restar>-</button><br><br></div>");
+            $("#opciones").append("<div class=cont data-id="+fechas.id+"> <h3>"+fechas.creador.username+"</h3><h1>"+ fechas.fecha + "</h1><br><h1>"+fechas.lugar+"</h1><h1 class=votos>"+fechas.votos+"</h1><button class=sumar>+</button> <button class=restar>-</button><br><br></div>");
           }
         })
       });
@@ -89,7 +91,7 @@
       if(!fecha||!lugar){
         alert("Es necesario rellenar fecha y hora");
       }else{
-        $.post("http://192.168.100.50:1337/fecha",{fecha:fecha, lugar:lugar, usuario:USUARIO_ID},function(resp){
+        $.post("http://192.168.100.62:1337/fecha",{fecha:fecha, lugar:lugar, usuario:USUARIO_ID},function(resp){
           console.log(resp);
           $("#opciones").append("<div class=cont data-id="+resp.id+"> <h1>"+ resp.fecha + "</h1><br><h1>"+resp.lugar+"</h1> <h1 class=votos>0</h1><button class=sumar>+</button> <button class=restar>-</button><br><br><button class=eliminar>Eliminar</button></div>");
         });
@@ -100,9 +102,12 @@
      $(document).on("click", ".sumar",  function(event){
        var boton=$(event.currentTarget);
        var id=boton.parent().data("id");
-        if(!boton.hasClass("clickado")){
+
+       if(boton.hasClass("clickado")){
+         alert("Ya has votado antes!")
+       } else if(!boton.hasClass("clickado")){
           $.ajax({
-          url:"http://192.168.100.50:1337/fecha/sumar/"+ id,
+          url:"http://192.168.100.62:1337/fecha/sumar/"+ id,
           type:"PUT",
           data:{
             usuario:USUARIO_ID
@@ -112,7 +117,13 @@
           console.log(sumar);
           boton.prev().text(sumar);
           boton.addClass("clickado");
-        });
+
+        }).fail(function(error){
+          console.log(error);
+          if(error.responseText==="Ya has votado antes, vaya pícaro"){
+            alert("Ya has votado antes!")
+          }
+        })
         };
      });
 
@@ -121,7 +132,7 @@
        var id=boton.parent().data("id");
        if(boton.prev().hasClass("clickado")){
          $.ajax({
-         url:"http://192.168.100.50:1337/fecha/restar/"+ id,
+         url:"http://192.168.100.62:1337/fecha/restar/"+ id,
          type:"PUT",
          data:{
            usuario:USUARIO_ID
@@ -145,7 +156,7 @@
        var boton=$(event.currentTarget);
        var id=boton.parent().data("id");
      $.ajax({
-     url:"http://192.168.100.50:1337/fecha/"+ id,
+     url:"http://192.168.100.62:1337/fecha/"+ id,
      type:"DELETE",
      data:{
        usuario:USUARIO_ID

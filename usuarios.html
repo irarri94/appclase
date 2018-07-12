@@ -7,7 +7,6 @@
     div{
       text-align: center;
     }
-
     </style>
   </head>
   <body>
@@ -16,14 +15,17 @@
     <input id="usuario" type="text" name="username" placeholder="usuario">
     <input id="contraseña" type="password" name="password" placeholder="contraseña">
     <button id="crear">Crear</button>
+    <h1 id="error"></h1>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
     <script>
     function crearUsuario(){
+
+
       var usuario=$("#usuario").val().trim();
       var contraseña=$("#contraseña").val().trim();
       $.ajax({
-        url:"http://192.168.100.50:1337/usuario",
+        url:"http://192.168.100.62:1337/usuario",
         type:"POST",
         data:{
           username:usuario,
@@ -35,14 +37,27 @@
 
       })
       .fail(function(error){
-        if(!usuario){
-          alert("Es necesario introducir el nombre de usuario");
-        }
-        if(!contraseña){
-          alert("Es necesario introducir la contraseña");
-        }
-      })
-    }
+        console.log(error.responseText);
+
+        $("#usuario").css("border-color","black");
+        $("#contraseña").css("border-color","black");
+
+        if(error.responseText==="Necesito username"){
+          $("#error").text("Es necesario introducir el nombre de usuario");
+          $("#usuario").css("border-color","red");
+
+        }else if (error.responseText==="Necesito password"){
+            $("#error").text("Es necesario introducir la contraseña");
+            $("#contraseña").css("border-color","red");
+
+        }else{
+          $("#error").text("Usuario duplicado, prueba con otro");
+          $("#usuario").css("border-color","red");
+      };
+    });
+  };
+
+
     $("#crear").click(crearUsuario);
     </script>
   </body>
